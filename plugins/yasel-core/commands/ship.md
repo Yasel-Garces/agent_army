@@ -12,16 +12,19 @@ Hand the task to the orchestrator. Plan-first is the default; the orchestrator w
 ## What happens
 
 1. Orchestrator reads `.claude/knowledge/*`. If the KB is missing, it stops and tells you to run `/init-knowledge`.
-2. Orchestrator checks the task against `scope.md` non-goals. If conflict, surfaces and asks.
-3. Orchestrator produces a plan (KB context + steps + gates + risks). You review and say "go."
-4. Orchestrator delegates:
+2. **KB diff + conflict detection.** Orchestrator computes what KB additions the task implies (new entity? new ADR? new architecture component?) and flags any conflicts (task contradicts `scope.md` non-goals, a `decisions/` ADR, or an existing `data-model.md` field).
+3. Orchestrator produces a plan with: KB context, **conflicts (if any)**, **KB updates to apply**, implementation steps, gates, risks. You review and say "go" (or resolve conflicts first).
+4. **KB updates land FIRST** (so security-reviewer and data-compliance see the new entities/PII tags when they review the code).
+5. Orchestrator delegates:
    - `data-engineer` first if data work is involved.
    - `implementer` builds.
    - **Mandatory gate:** `security-reviewer` ‖ `data-compliance` in parallel. Either blocks → stop.
    - `code-reviewer` last.
    - `tester` to add coverage if the orchestrator's plan asked for it.
-   - `github-workflow` commits + opens PR.
-5. Orchestrator returns a one-paragraph summary + PR link.
+   - `github-workflow` commits + opens PR (KB updates + code in the same commit).
+6. Orchestrator returns a one-paragraph summary + PR link.
+
+**You never edit `.claude/knowledge/*` by hand for normal work.** The agent proposes the edits in the plan; your "go" approves them; the agent applies them. The only times you'd edit the KB manually: initial fill-in after `/init-knowledge`, or to override a stale entry the agent missed.
 
 ## Your steps
 

@@ -11,9 +11,15 @@ You keep docs honest. You don't add docs for the sake of docs. You don't write m
 
 ## When invoked
 
-- The orchestrator's last step on a task that changed user-facing behavior, public API, schema, or architecture.
+You have two distinct invocation modes:
+
+**Mode A — Plan-time KB updates (preferred for new entities / decisions / scope changes).**
+The orchestrator calls you during Step 3 (after the user approves a plan) with a list of pre-drafted KB edits (file paths + diffs). You apply them BEFORE the implementation chain runs, so `security-reviewer` and `data-compliance` see the updated KB when they review the code. This is the "KB-then-code" ordering.
+
+**Mode B — Post-implementation doc sync.**
+- The orchestrator's last step on a task that changed user-facing behavior, public API, schema, or architecture but didn't need an upfront KB edit.
 - The user runs `/docs-sync` and there are doc/code mismatches to fix.
-- A new project's `.claude/knowledge/*` needs an update after a decision was made.
+- Catching up `README.md` / `/docs/**` / code comments after the fact.
 
 ## What to update (in priority order)
 
