@@ -24,7 +24,27 @@ Read every file under `.claude/knowledge/`. If `.claude/knowledge/scope.md` is m
 
 ### 2. Interpret the user's input
 
-`$ARGUMENTS` is the user's natural-language description of what's changed or what they want recorded. Categorize:
+`$ARGUMENTS` can be one of three things:
+
+**(a) A direct description** — e.g., `/update-knowledge "we chose Plaid because of fraud risk"`. Use that as the source of truth for the update.
+
+**(b) Empty or a reference to the conversation** — e.g., `/update-knowledge`, `/update-knowledge "from our chat"`, `/update-knowledge "what we just discussed"`. In this case, **mine the current conversation history** for KB-worthy content:
+- Design decisions (chose X over Y, with rationale).
+- New entities or fields the user described.
+- Constraints, non-goals, regulatory requirements mentioned.
+- Architectural choices (added service X, swapped Y for Z).
+- PII tier reclassifications.
+- New domain terms the user defined.
+
+Skip noise: implementation details, debugging chatter, throwaway brainstorming. A decision counts only if the user explicitly chose it (look for "let's go with...", "we decided...", "yeah, X for sure", "agreed", explicit confirmation).
+
+If the conversation has nothing KB-worthy, say so and exit — don't invent updates.
+
+**(c) Ambiguous** — if you can't tell whether the user means (a) or (b), ask: "Update from your last message, from the whole conversation, or something specific?"
+
+### 3. Categorize
+
+Whatever the source, route each KB-worthy item to the right file:
 
 - **New entity / field** → `data-model.md` addition (with PII tier).
 - **New decision** → new ADR `decisions/YYYY-MM-DD-<slug>.md`.
@@ -33,13 +53,13 @@ Read every file under `.claude/knowledge/`. If `.claude/knowledge/scope.md` is m
 - **New domain term** → `glossary.md` addition.
 - **Stale entry** → in-place edit to the relevant file (mark superseded if it's a decision).
 
-If the user's input is ambiguous about which file to update, ask before drafting.
+If routing is ambiguous, ask before drafting.
 
-### 3. Draft the edits
+### 4. Draft the edits
 
 Produce concrete diffs — file paths + before/after snippets — not vague descriptions. Use today's date (`$(date +%Y-%m-%d)`) for ADR filenames.
 
-### 4. Detect conflicts
+### 5. Detect conflicts
 
 If the proposed update conflicts with existing KB (e.g., contradicts a previously-accepted ADR, redefines an entity field, removes a published non-goal), flag the conflict explicitly. Offer:
 
@@ -49,7 +69,7 @@ If the proposed update conflicts with existing KB (e.g., contradicts a previousl
 
 Don't apply on conflict without explicit user choice.
 
-### 5. Show the plan
+### 6. Show the plan
 
 ```markdown
 ## KB update plan
@@ -68,11 +88,11 @@ Don't apply on conflict without explicit user choice.
 
 Wait for user approval.
 
-### 6. Apply
+### 7. Apply
 
 On approval: write the edits. Confirm by reading the files back.
 
-### 7. Commit (optional)
+### 8. Commit (optional)
 
 Ask the user: "Commit these KB updates now, or leave uncommitted for later?"
 
@@ -80,6 +100,30 @@ Ask the user: "Commit these KB updates now, or leave uncommitted for later?"
 - If leave: report the files changed and stop.
 
 ## Examples
+
+### Conversational mode (most natural)
+
+```
+You: let me think about how to handle bank account linking — Plaid or manual entry?
+
+Agent: trade-offs are X, Y, Z...
+
+You: yeah Plaid for sure, fraud risk on manual is too high
+
+Agent: agreed.
+
+You: /update-knowledge
+
+Agent: KB update plan:
+  Source: mined from conversation.
+  Detected: 1 decision (chose Plaid over manual entry, reason = fraud risk).
+  Conflicts: none.
+  Proposed edits:
+    - decisions/2026-05-19-plaid-for-bank-linking.md: NEW ADR
+  Apply now? (y/n)
+```
+
+### Direct mode
 
 ```
 You: /update-knowledge we decided to use Plaid for bank linking instead of manual entry; rejected manual because of fraud risk on self-reported account numbers
