@@ -43,6 +43,7 @@ Then in that project:
 |---|---|
 | `/init-knowledge` | Scaffolds `.claude/knowledge/` skeleton. Edit `scope.md` + `data-model.md` after. |
 | `/onboard-agent` | Agent reads KB + repo, reports "what I understand," asks gap questions. Confirms grounding before `/ship`. |
+| `/update-knowledge "..."` | Standalone KB update without writing code. Use to record a decision, fix a stale entry, or capture a new constraint. Agent drafts edits, flags conflicts, applies on approval. |
 
 ### Doing work
 
