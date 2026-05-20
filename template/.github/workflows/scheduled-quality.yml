@@ -1,0 +1,45 @@
+name: Scheduled — Code Quality
+
+# Weekly: pick a random directory, run /code-quality, open a PR with auto-fixes.
+
+on:
+  schedule:
+    # Sundays at 07:00 UTC
+    - cron: '0 7 * * 0'
+  workflow_dispatch:
+    inputs:
+      target_dir:
+        description: 'Directory to audit (blank = random)'
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: claude-opus-4-7
+          settings_file: ".claude/settings.unattended.json"
+          prompt: |
+            Install agent_army:
+
+              /plugin marketplace add Yasel-Garces/agent_army
+              /plugin install yasel-core@agent-army
+
+            Target directory: ${{ inputs.target_dir }}
+            (If blank, pick a random top-level source directory — e.g., app/, lib/, server/.)
+
+            Run /code-quality on that directory. If safe auto-fixes apply (lint --fix,
+            import sorting, format), apply them on a new branch quality/$(date +%Y-%m-%d)
+            and open a PR titled "chore(quality): weekly sweep $(date +%Y-%m-%d)".
+            Surface findings that require human judgment in the PR description; don't
+            auto-fix those.

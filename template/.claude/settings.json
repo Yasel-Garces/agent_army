@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment": "Project-level settings. The agent_army plugin contributes most config; this file is for project-specific overrides only. Plugin settings + this file are merged (project wins on conflicts).",
+  "permissions": {
+    "_comment": "Add project-specific allow/deny here. Examples below — uncomment if needed.",
+    "allow": [
+    ],
+    "deny": [
+    ]
+  },
+  "enabledPlugins": {
+    "yasel-core@agent-army": true
+  }
+}

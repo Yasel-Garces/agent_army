@@ -1,0 +1,22 @@
+# Session-local Claude Code permissions
+.claude/settings.local.json
+**/.claude/settings.local.json
+
+# MCP audit logs (runtime artifact)
+plugins/yasel-core/logs/
+**/.claude/logs/
+
+# Editor / OS noise
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*~
+
+# Node / Python caches in case any helper scripts need them
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+.env*
+!.env.example

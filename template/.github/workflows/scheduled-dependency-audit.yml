@@ -1,0 +1,44 @@
+name: Scheduled — Dependency Audit
+
+# Biweekly: check for dep updates + CVEs. Open a PR with safe updates.
+
+on:
+  schedule:
+    # 1st and 15th at 08:00 UTC
+    - cron: '0 8 1,15 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: claude-opus-4-7
+          settings_file: ".claude/settings.unattended.json"
+          prompt: |
+            Install agent_army:
+
+              /plugin marketplace add Yasel-Garces/agent_army
+              /plugin install yasel-core@agent-army
+
+            For each detected stack (package.json, pyproject.toml, requirements.txt):
+            1. Run the appropriate audit (npm/pnpm audit, pip-audit, osv-scanner).
+            2. For patch/minor updates without breaking changes, run the package
+               manager's update command and let the test suite run.
+            3. If tests pass, commit to a branch deps/$(date +%Y-%m-%d) and open a PR
+               "chore(deps): biweekly safe updates $(date +%Y-%m-%d)" with a per-package
+               summary in the body.
+            4. For major updates or CVE fixes that require code changes, do NOT auto-fix.
+               File a GitHub issue per package.
+
+            Critical: do NOT touch dependencies marked DO NOT UPGRADE in .claude/knowledge/decisions/.

@@ -1,0 +1,18 @@
+{
+  "name": "agent-army",
+  "owner": {
+    "name": "Yasel Garces",
+    "url": "https://github.com/Yasel-Garces"
+  },
+  "metadata": {
+    "description": "Yasel's canonical Claude Code setup: orchestrator + subagents (security, data-compliance, data-engineer, code-reviewer, debugger, tester), slash commands, skills, hooks, and MCP servers. Installable into any project repo.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "yasel-core",
+      "source": "./plugins/yasel-core",
+      "description": "Core agent army: orchestrator + 9 subagents, knowledge-base scaffolding, security/compliance gates, code-edit autopilot, MCP supervision. Use as the default install in any new project."
+    }
+  ]
+}

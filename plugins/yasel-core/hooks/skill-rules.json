@@ -1,0 +1,215 @@
+{
+  "$schema": "./skill-rules.schema.json",
+  "version": "1.0",
+  "config": {
+    "minConfidenceScore": 3,
+    "showMatchReasons": true,
+    "maxSkillsToShow": 5
+  },
+  "scoring": {
+    "keyword": 2,
+    "keywordPattern": 3,
+    "pathPattern": 4,
+    "directoryMatch": 5,
+    "intentPattern": 4,
+    "contentPattern": 3,
+    "contextPattern": 2
+  },
+  "directoryMappings": {
+    "app/api": "nextjs-app-router",
+    "app/(": "nextjs-app-router",
+    "pages/api": "nextjs-app-router",
+    "aws-lambda": "aws-lambda-patterns",
+    "lambda": "aws-lambda-patterns",
+    "infra": "aws-lambda-patterns",
+    "aws-migration": "postgres-migrations",
+    "migrations": "postgres-migrations",
+    "db/migrations": "postgres-migrations",
+    "lib/security": "security-hardening",
+    "lib/auth": "security-hardening",
+    "src/auth": "security-hardening",
+    "lib/db": "postgres-migrations",
+    "lib/logger": "pii-handling",
+    "lib/redact": "pii-handling",
+    ".github/workflows": "github-actions",
+    "tests": "testing-patterns",
+    "__tests__": "testing-patterns"
+  },
+  "skills": {
+    "security-hardening": {
+      "description": "OWASP top 10, authn/authz, input validation, output encoding",
+      "priority": 10,
+      "triggers": {
+        "keywords": ["auth", "authentication", "authorization", "security", "owasp", "xss", "csrf", "sql injection", "ssrf", "rate limit", "permission", "token", "session", "cookie"],
+        "keywordPatterns": ["\\bauth\\b", "\\bjwt\\b", "\\bsession\\b"],
+        "pathPatterns": ["**/auth/**", "**/security/**", "**/middleware.ts", "**/middleware.js"],
+        "intentPatterns": [
+          "(?:add|implement|fix).*(?:auth|login|signup|sso|oauth)",
+          "(?:harden|secure|protect).*(?:endpoint|route|api|lambda)"
+        ],
+        "contentPatterns": ["bcrypt", "jwt\\.", "verify(?:Token|Jwt)", "getServerSession"]
+      },
+      "relatedSkills": ["pii-handling", "secrets-management"]
+    },
+    "pii-handling": {
+      "description": "PII inventory, redact-before-log, encryption-at-rest, third-party egress",
+      "priority": 10,
+      "triggers": {
+        "keywords": ["pii", "personal data", "gdpr", "ccpa", "redact", "encrypt", "user data", "email", "phone", "ssn", "credit card", "anonymize"],
+        "keywordPatterns": ["\\bpii\\b", "\\bgdpr\\b", "\\bccpa\\b", "redact"],
+        "pathPatterns": ["**/redact*", "**/anonymize*", "**/logger*"],
+        "intentPatterns": [
+          "(?:log|store|send|track).*(?:user|email|phone|pii)",
+          "(?:delete|erase|anonymize).*(?:user|account|data)"
+        ]
+      },
+      "relatedSkills": ["security-hardening", "secrets-management"]
+    },
+    "secrets-management": {
+      "description": "Env vars, SSM/Secrets Manager, KMS, rotation, .env hygiene",
+      "priority": 9,
+      "triggers": {
+        "keywords": ["secret", "api key", "token", "env var", "environment variable", "ssm", "secrets manager", "kms", "vault", "rotation"],
+        "keywordPatterns": ["\\bsecret\\b", "\\benv\\b.*var", "api[_\\s-]?key"],
+        "pathPatterns": ["**/.env*", "**/secrets/**", "**/credentials/**"],
+        "intentPatterns": [
+          "(?:add|set|store|rotate).*(?:secret|key|token|credential)",
+          "(?:load|read).*(?:env|environment|ssm)"
+        ]
+      },
+      "excludePatterns": ["secretly"]
+    },
+    "nextjs-app-router": {
+      "description": "Next.js 14 App Router — server components, server actions, route handlers, middleware",
+      "priority": 8,
+      "triggers": {
+        "keywords": ["next.js", "nextjs", "app router", "server action", "server component", "route handler", "middleware", "use server", "use client"],
+        "keywordPatterns": ["\\bnext\\.js\\b", "app[/_]router", "server[\\s-]action"],
+        "pathPatterns": ["app/**/page.tsx", "app/**/layout.tsx", "app/**/route.ts", "app/api/**", "middleware.ts"],
+        "intentPatterns": [
+          "(?:create|add).*(?:page|route|server action|api endpoint)",
+          "(?:next\\.js|app router).*(?:auth|fetch|data)"
+        ],
+        "contentPatterns": ["'use server'", "'use client'", "NextResponse", "cookies\\(\\)", "headers\\(\\)"]
+      },
+      "relatedSkills": ["security-hardening"]
+    },
+    "aws-lambda-patterns": {
+      "description": "AWS Lambda handlers, IAM least-privilege, SSM Parameter Store, cold-start, VPC",
+      "priority": 8,
+      "triggers": {
+        "keywords": ["lambda", "api gateway", "aws", "ssm", "iam", "cold start", "vpc", "cloudwatch"],
+        "keywordPatterns": ["aws[\\s-]?lambda", "api[\\s-]?gateway"],
+        "pathPatterns": ["aws-lambda/**", "lambda/**", "infra/**", "**/handler.ts", "**/handler.py"],
+        "intentPatterns": [
+          "(?:create|add|deploy).*(?:lambda|api gateway)",
+          "(?:lambda).*(?:handler|trigger|event)"
+        ],
+        "contentPatterns": ["APIGatewayProxyEvent", "Context\\b.*lambda", "boto3", "@aws-sdk"]
+      },
+      "relatedSkills": ["secrets-management", "security-hardening"]
+    },
+    "postgres-migrations": {
+      "description": "Schema design, safe migrations (CONCURRENTLY, NOT VALID), RLS, indexes",
+      "priority": 8,
+      "triggers": {
+        "keywords": ["postgres", "postgresql", "migration", "schema", "rls", "row level security", "index", "rds"],
+        "keywordPatterns": ["\\bpostgres\\b", "\\brls\\b", "row[\\s-]?level[\\s-]?security"],
+        "pathPatterns": ["migrations/**", "**/*.sql", "aws-migration/**", "db/**"],
+        "intentPatterns": [
+          "(?:create|add|alter|drop).*(?:table|column|index|migration|schema)",
+          "(?:migrate|migration).*(?:up|down|forward|rollback)"
+        ],
+        "contentPatterns": ["CREATE TABLE", "ALTER TABLE", "CREATE INDEX", "ROW LEVEL SECURITY"]
+      },
+      "relatedSkills": ["pii-handling", "security-hardening"]
+    },
+    "testing-patterns": {
+      "description": "Test structure, factory functions, behavior-driven tests, mocking guidance",
+      "priority": 7,
+      "triggers": {
+        "keywords": ["test", "tests", "testing", "spec", "tdd", "mock", "fixture", "factory"],
+        "keywordPatterns": ["\\btest(?:s|ing)?\\b", "\\bspec\\b"],
+        "pathPatterns": ["**/*.test.ts", "**/*.test.tsx", "**/*.test.js", "**/*.spec.ts", "**/test/**", "**/tests/**", "**/__tests__/**"],
+        "intentPatterns": [
+          "(?:write|add|create|fix).*(?:test|spec)",
+          "(?:test|spec).*(?:for|of|the)"
+        ],
+        "contentPatterns": ["describe\\(", "it\\(", "expect\\(", "vi\\.mock", "jest\\.mock"]
+      }
+    },
+    "systematic-debugging": {
+      "description": "Four-phase debugging — reproduce, narrow, root-cause, fix",
+      "priority": 9,
+      "triggers": {
+        "keywords": ["bug", "debug", "fix", "error", "issue", "broken", "crash", "failing", "regression"],
+        "keywordPatterns": ["\\bbug\\b", "\\berror\\b", "doesn't work", "not working"],
+        "intentPatterns": [
+          "(?:fix|debug|resolve|investigate).*(?:bug|error|issue|problem|crash)",
+          "(?:why).*(?:not working|broken|failing|crash)"
+        ]
+      },
+      "excludePatterns": ["fix typo", "fix formatting", "fix lint"]
+    },
+    "code-review": {
+      "description": "Standards for reviewing or writing reviewable code — TS hygiene, state handling, mutation UX",
+      "priority": 6,
+      "triggers": {
+        "keywords": ["review", "pr review", "code review", "lint", "typecheck"],
+        "keywordPatterns": ["code[\\s-]?review", "pr[\\s-]?review"],
+        "intentPatterns": [
+          "(?:review|audit).*(?:code|pr|change|diff)"
+        ]
+      }
+    },
+    "verification-before-completion": {
+      "description": "Evidence-based completion claims — run it, don't claim it works",
+      "priority": 8,
+      "triggers": {
+        "keywords": ["done", "complete", "finished", "verify", "confirm"],
+        "intentPatterns": [
+          "(?:is it|are we).*(?:done|complete|finished)",
+          "(?:verify|check|confirm).*(?:works|passes)"
+        ]
+      }
+    },
+    "git-workflow": {
+      "description": "Conventional commits, branch naming, PR templates, safe git ops",
+      "priority": 6,
+      "triggers": {
+        "keywords": ["commit", "branch", "pull request", "pr", "merge", "rebase", "push"],
+        "keywordPatterns": ["\\bgit\\b", "\\bcommit\\b", "\\bbranch\\b"],
+        "pathPatterns": [".github/**"],
+        "intentPatterns": [
+          "(?:create|open).*(?:commit|branch|pr|pull request)",
+          "(?:push|merge|rebase).*(?:to|onto)"
+        ]
+      }
+    },
+    "github-actions": {
+      "description": "GitHub Actions CI/CD workflow patterns, secrets handling",
+      "priority": 6,
+      "triggers": {
+        "keywords": ["github action", "workflow", "ci/cd", "cicd", "pipeline"],
+        "keywordPatterns": ["github[\\s-]actions?", "ci/?cd", "\\bworkflow\\b"],
+        "pathPatterns": [".github/workflows/**", ".github/**/*.yml", ".github/**/*.yaml"],
+        "intentPatterns": [
+          "(?:create|add|update).*(?:\\bworkflow\\b|\\baction\\b|\\bpipeline\\b)"
+        ],
+        "contentPatterns": ["runs-on:", "uses:", "steps:"]
+      }
+    },
+    "documentation": {
+      "description": "Doc standards, JSDoc/TSDoc, README hygiene, .claude/knowledge updates",
+      "priority": 4,
+      "triggers": {
+        "keywords": ["documentation", "tsdoc", "jsdoc", "readme", "docs"],
+        "keywordPatterns": ["\\bdoc(?:s|umentation)?\\b", "\\breadme\\b"],
+        "pathPatterns": ["**/docs/**", "**/*.md", "**/README*"],
+        "intentPatterns": [
+          "(?:write|add|update).*(?:doc|documentation|readme)"
+        ]
+      }
+    }
+  }
+}

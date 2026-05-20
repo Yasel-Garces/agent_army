@@ -1,0 +1,56 @@
+name: PR — Security + Compliance Review
+
+# Runs security-reviewer + data-compliance from agent_army on every PR.
+# Blocks merge via required status check if either returns BLOCKED.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install scanners
+        run: |
+          # gitleaks for secrets (no setup needed for OSV)
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.18.0/gitleaks_8.18.0_linux_x64.tar.gz \
+            | tar -xz -C /tmp gitleaks
+          sudo mv /tmp/gitleaks /usr/local/bin/
+          # osv-scanner
+          go install github.com/google/osv-scanner/cmd/osv-scanner@latest || true
+
+      - uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: claude-opus-4-7
+          settings_file: ".claude/settings.unattended.json"
+          prompt: |
+            Install agent_army and run a security + compliance review for PR #${{ github.event.pull_request.number }}:
+
+              /plugin marketplace add Yasel-Garces/agent_army
+              /plugin install yasel-core@agent-army
+
+            Invoke security-reviewer and data-compliance agents in parallel against
+            `git diff origin/${{ github.event.pull_request.base.ref }}...HEAD`.
+
+            Also run:
+              gitleaks detect --source . --no-banner --redact || true
+              npm audit --audit-level=high || pnpm audit --audit-level high || true
+              osv-scanner --recursive . || true
+
+            Post the aggregated verdict as a PR comment:
+              ## Automated Security + Compliance Review
+              **Security:** APPROVED | BLOCKED — reason
+              **Compliance:** APPROVED | BLOCKED — reason
+              **Scanner results:** ...
+
+            If either is BLOCKED, exit with non-zero status to fail the check.

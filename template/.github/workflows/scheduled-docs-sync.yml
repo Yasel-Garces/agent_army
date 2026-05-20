@@ -1,0 +1,36 @@
+name: Scheduled — Docs Sync
+
+# Monthly: run /docs-sync, open a PR with proposed doc updates.
+
+on:
+  schedule:
+    # 1st of the month at 06:00 UTC
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  docs-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: claude-opus-4-7
+          settings_file: ".claude/settings.unattended.json"
+          prompt: |
+            Install agent_army and run docs sync:
+
+              /plugin marketplace add Yasel-Garces/agent_army
+              /plugin install yasel-core@agent-army
+              /docs-sync
+
+            If docs are out of sync, invoke the docs-writer agent to propose updates.
+            Open a PR titled "docs: monthly sync $(date +%Y-%m)" — do not auto-merge.

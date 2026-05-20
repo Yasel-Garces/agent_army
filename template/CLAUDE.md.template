@@ -1,0 +1,39 @@
+# <Project Name>
+
+Replace `<Project Name>` and the bullets below with project-specific details. This file is loaded by Claude at session start in addition to the agent_army plugin's content.
+
+## Quick facts
+
+- **Stack:** <e.g., Next.js 14 App Router + AWS Lambda + RDS Postgres + Firebase>
+- **Test:** `pnpm test`
+- **Lint:** `pnpm lint`
+- **Build:** `pnpm build`
+- **Dev server:** `pnpm dev`
+
+## Project knowledge base
+
+Authoritative project info lives under `.claude/knowledge/`. The agent army plugin reads these files automatically:
+
+- [@.claude/knowledge/scope.md](.claude/knowledge/scope.md) — what this project is / isn't
+- [@.claude/knowledge/context.md](.claude/knowledge/context.md) — business context, users, constraints
+- [@.claude/knowledge/architecture.md](.claude/knowledge/architecture.md) — system map, data flow
+- [@.claude/knowledge/data-model.md](.claude/knowledge/data-model.md) — entities + PII classification (drives security-reviewer / data-compliance)
+- [@.claude/knowledge/glossary.md](.claude/knowledge/glossary.md) — domain terms
+- [@.claude/knowledge/decisions/](.claude/knowledge/decisions/) — ADRs
+
+If any of these is missing or still has its `[TODO: replace this banner ...]` marker, the agent will stop and ask you to run `/init-knowledge` and `/onboard-agent` first.
+
+## Project-specific overrides
+
+Anything below this line overrides or extends the agent_army defaults for this project only.
+
+### Conventions
+- (project-specific code style, naming, file layout — only the things that *differ* from agent_army defaults)
+
+### Commands worth knowing
+```bash
+# (only the ones this project adds — e.g., db migrations, seed scripts, deploy)
+```
+
+### Stuff to NOT touch
+- (specific files / directories that should be left alone)

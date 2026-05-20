@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment": "Personal overrides — copy to settings.local.json and edit. This file is gitignored. Use for machine-specific paths, optional MCP servers, or temporary loosened permissions during a debugging session.",
+  "permissions": {
+    "allow": [
+    ],
+    "deny": [
+    ]
+  }
+}

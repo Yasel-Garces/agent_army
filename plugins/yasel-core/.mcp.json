@@ -1,0 +1,74 @@
+{
+  "_comment": "MCP servers shipped with yasel-core. Trust tiers documented in docs/SECURITY.md. settings.json only auto-enables github + memory; the rest are per-session approval. JIRA is excluded by design (use Linear).",
+  "mcpServers": {
+    "memory": {
+      "_tier": 1,
+      "_notes": "Tier 1 — local-only, no network. Auto-enabled.",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "github": {
+      "_tier": 1,
+      "_notes": "Tier 1 — auto-enabled. Scope the GITHUB_TOKEN to least-privilege (read:repo + write:issues for the active repo only).",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "linear": {
+      "_tier": 2,
+      "_notes": "Tier 2 — per-session approval. Yasel's choice over JIRA.",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-linear"],
+      "env": {
+        "LINEAR_API_KEY": "${LINEAR_API_KEY}"
+      }
+    },
+    "notion": {
+      "_tier": 2,
+      "_notes": "Tier 2 — per-session approval.",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-notion"],
+      "env": {
+        "NOTION_API_KEY": "${NOTION_API_KEY}"
+      }
+    },
+    "slack": {
+      "_tier": 2,
+      "_notes": "Tier 2 — per-session approval. Reads channel data; can write messages — be careful.",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+        "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
+      }
+    },
+    "postgres": {
+      "_tier": 3,
+      "_notes": "Tier 3 — read-only by default. Writes blocked by mcp-supervisor.sh unless MCP_POSTGRES_ALLOW_WRITES=1. Use a read-only DB role in DATABASE_URL.",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "DATABASE_URL": "${DATABASE_URL_READONLY:-${DATABASE_URL}}"
+      }
+    },
+    "sentry": {
+      "_tier": 3,
+      "_notes": "Tier 3 — read-only error data; per-session approval.",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sentry"],
+      "env": {
+        "SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}",
+        "SENTRY_ORG": "${SENTRY_ORG}"
+      }
+    }
+  }
+}
