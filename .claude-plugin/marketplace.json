@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Yasel's canonical Claude Code setup: orchestrator + subagents (security, data-compliance, data-engineer, code-reviewer, debugger, tester), slash commands, skills, hooks, and MCP servers. Installable into any project repo.",
-    "version": "0.4.0"
+    "version": "0.5.0"
   },
   "plugins": [
     {

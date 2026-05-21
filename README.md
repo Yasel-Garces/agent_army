@@ -49,7 +49,8 @@ Then in that project:
 
 | Command | What it does |
 |---|---|
-| `/ship "task"` | End-to-end: plan → user approves → implementer → security + compliance gate → code review → test → commit → PR. **The workhorse.** |
+| `/discuss "rough idea"` | **Conversational refinement.** Use when you don't yet know exactly what you want. Agent asks clarifying questions, surfaces trade-offs, suggests alternatives. When you say "ready," it hands off to `/ship`. |
+| `/ship "task"` | End-to-end: plan → user approves → implementer → security + compliance gate → code review → test → commit → PR. **The workhorse.** Use when the task is already concrete. |
 | `/ticket ENG-123` | Same as `/ship` but starts by reading a Linear ticket and updates it on PR open. |
 | `/design-import "<source>"` | Translate a design (claude.ai/design URL, pasted JSX, screenshot, reference component) into production code. Maps tokens, swaps in shadcn primitives, adds missing interactive states. Runs through the full chain including design-reviewer. |
 
