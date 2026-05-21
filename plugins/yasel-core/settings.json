@@ -198,9 +198,27 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_ROOT\"/hooks/runtime-watchdog.sh",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_ROOT\"/hooks/activity-log.sh",
+            "timeout": 5
+          }
+        ]
+      },
       {
         "matcher": "Edit|MultiEdit|Write",
         "hooks": [
@@ -228,6 +246,17 @@
             "type": "command",
             "command": "\"$CLAUDE_PLUGIN_ROOT\"/hooks/auto-test-related.sh",
             "timeout": 120
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_ROOT\"/hooks/session-summary.sh",
+            "timeout": 5
           }
         ]
       }

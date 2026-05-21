@@ -70,6 +70,21 @@ Then in that project:
 | `/deep-dive <area>` | Dispatches Explore subagents in parallel to map a codebase area. Output: structure + data flow + smells. Use before a refactor. |
 | `/onboard "task"` | **Per-task** onboarding (vs. `/onboard-agent` which is per-project). Heavy exploration + writes `.claude/tasks/<id>/onboarding.md`. Use before deciding to `/ship`. |
 
+### Monitoring
+
+| Command | What it does |
+|---|---|
+| `/status` | Human-readable snapshot: active session activity, last session summary, uncommitted changes, recent commits, open PRs, recent MCP calls. Read-only — safe to run in a second terminal while a long task is in progress. |
+
+Plus, in any shell:
+
+```bash
+tail -f .claude/logs/activity.log    # real-time tool-by-tool progress
+cat .claude/logs/sessions.log        # session history
+```
+
+The plugin now also includes a **runtime watchdog** that warns at 30 min (soft) and 60 min (hard) of session time, and detects stuck-loop patterns (5 identical tool calls in a row). Override with `CLAUDE_SESSION_SOFT_LIMIT` / `CLAUDE_SESSION_HARD_LIMIT` env vars (seconds).
+
 ### Generating
 
 | Command | What it does |
