@@ -4,7 +4,7 @@ Canonical Claude Code configuration, packaged as a plugin marketplace. Install o
 
 ## What you get
 
-**Agents** — orchestrator + 9 specialists: `security-reviewer`, `data-compliance`, `data-engineer`, `implementer`, `code-reviewer`, `debugger`, `tester`, `docs-writer`, `github-workflow`.
+**Agents** — orchestrator + 10 specialists: `security-reviewer`, `data-compliance`, `data-engineer`, `design-reviewer`, `implementer`, `code-reviewer`, `debugger`, `tester`, `docs-writer`, `github-workflow`.
 
 **Workflow** — plan-first, knowledge-grounded, security-gated:
 1. `/init-knowledge` scaffolds `.claude/knowledge/` (scope, context, architecture, data-model, glossary, ADRs).
@@ -51,6 +51,7 @@ Then in that project:
 |---|---|
 | `/ship "task"` | End-to-end: plan → user approves → implementer → security + compliance gate → code review → test → commit → PR. **The workhorse.** |
 | `/ticket ENG-123` | Same as `/ship` but starts by reading a Linear ticket and updates it on PR open. |
+| `/design-import "<source>"` | Translate a design (claude.ai/design URL, pasted JSX, screenshot, reference component) into production code. Maps tokens, swaps in shadcn primitives, adds missing interactive states. Runs through the full chain including design-reviewer. |
 
 ### Auditing / reviewing
 

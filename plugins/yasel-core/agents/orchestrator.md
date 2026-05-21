@@ -106,9 +106,16 @@ Delegate each step via the Agent tool. Choose subagents:
 | Schema, migration, ETL, non-trivial query | `data-engineer` (design) → `implementer` (build) |
 | Bug fix | `debugger` first, then `implementer` |
 | Code change touching auth / data / route / Lambda | `implementer`, then **mandatory** gate |
+| **UI change** (touches `app/**/page.tsx`, `app/**/layout.tsx`, `components/**/*.tsx`, `*.css`) | `implementer`, then **mandatory** `design-reviewer` (alongside security gate) |
 | Pure refactor with no behavior change | `implementer`, lighter security gate |
 | Tests only | `tester` |
 | Docs only | `docs-writer` (skip security gate) |
+
+### Mandatory design-fidelity gate (UI tasks)
+
+For any task that touches UI files, invoke `design-reviewer` in **parallel** with `security-reviewer` and `data-compliance`. All three can block. If `design-reviewer` returns `BLOCKED` (structural drift, wrong primitives, missing interactive states on primary actions), hand back to `implementer` with the findings — do not proceed to commit.
+
+The design source should be: (a) whatever the user provided via `/design-import` or in the task prompt, (b) otherwise an existing reference component the user named, (c) otherwise `.claude/knowledge/design-system.md` alone (looser review).
 
 ### Mandatory security + compliance gate
 

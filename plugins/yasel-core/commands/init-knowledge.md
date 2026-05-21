@@ -11,10 +11,10 @@ Scaffold a project knowledge base under `.claude/knowledge/` so future agent wor
 
 1. Check if `.claude/knowledge/scope.md` already exists. If yes, stop and report — do NOT overwrite. The user can edit it directly or delete and re-run.
 2. Create the directory: `.claude/knowledge/decisions/`.
-3. Write the six skeleton files below, each with a banner the user must replace before `/onboard-agent` will accept the KB as filled in.
+3. Write the seven skeleton files below, each with a banner the user must replace before `/onboard-agent` will accept the KB as filled in.
 4. Report:
    - what was created,
-   - which fields the user must fill in first (scope, data-model — the rest can come later),
+   - which fields the user must fill in first (scope, data-model — the rest can come later; design-system can come right after if the project has UI),
    - that the next command is `/onboard-agent` once the user has filled in at least scope and data-model.
 
 ## Skeleton files to write
@@ -132,6 +132,12 @@ Scaffold a project knowledge base under `.claude/knowledge/` so future agent wor
 
 - (how long is each PII field kept? what triggers deletion?)
 ```
+
+### `.claude/knowledge/design-system.md`
+
+Copy from `template/.claude/knowledge/design-system.md` in the agent_army repo. It captures the project's color tokens, spacing scale, typography, installed shadcn primitives, responsive breakpoints, and a11y baseline. The `design-reviewer` agent reads this when verifying UI fidelity.
+
+If the project has no UI (pure backend / library), leave the banner intact — the design-reviewer will skip files when this file is unfilled.
 
 ### `.claude/knowledge/glossary.md`
 

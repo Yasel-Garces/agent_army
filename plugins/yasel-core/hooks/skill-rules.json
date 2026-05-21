@@ -199,6 +199,22 @@
         "contentPatterns": ["runs-on:", "uses:", "steps:"]
       }
     },
+    "design-fidelity": {
+      "description": "Faithful translation of claude.ai/design / Figma / screenshots into production code — Tailwind tokens, shadcn primitives, responsive, interactive states, a11y",
+      "priority": 8,
+      "triggers": {
+        "keywords": ["design", "ui", "component", "page", "layout", "claude.ai/design", "figma", "tailwind", "shadcn", "responsive", "mockup", "wireframe"],
+        "keywordPatterns": ["claude\\.ai/design", "\\bui\\b", "\\bshadcn\\b"],
+        "pathPatterns": ["app/**/page.tsx", "app/**/layout.tsx", "components/**/*.tsx", "**/*.css", "app/globals.css", "tailwind.config.*"],
+        "intentPatterns": [
+          "(?:build|create|implement|design).*(?:page|component|screen|view|layout|ui)",
+          "(?:match|recreate|translate|port).*(?:design|mockup|figma|wireframe)",
+          "(?:from|in).*claude\\.ai/design"
+        ],
+        "contentPatterns": ["className=", "tailwind", "<Button", "<Card", "<Dialog"]
+      },
+      "relatedSkills": ["security-hardening"]
+    },
     "documentation": {
       "description": "Doc standards, JSDoc/TSDoc, README hygiene, .claude/knowledge updates",
       "priority": 4,
