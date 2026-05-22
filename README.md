@@ -4,7 +4,9 @@ Canonical Claude Code configuration, packaged as a plugin marketplace. Install o
 
 ## What you get
 
-**Agents** — orchestrator + 10 specialists: `security-reviewer`, `data-compliance`, `data-engineer`, `design-reviewer`, `implementer`, `code-reviewer`, `debugger`, `tester`, `docs-writer`, `github-workflow`.
+**Agents** — orchestrator + 11 specialists: `security-reviewer`, `data-compliance`, `data-engineer`, `design-reviewer`, `devil-advocate`, `implementer`, `code-reviewer`, `debugger`, `tester`, `docs-writer`, `github-workflow`.
+
+**Per-task scratchpad** — every task gets `.claude/tasks/<task-id>/` with `plan.md`, `critique.md`, `scratchpad.md`, `checkpoint.json`, and `evidence/`. Working memory survives context compaction; checkpoints enable resume on interruption.
 
 **Workflow** — plan-first, knowledge-grounded, security-gated:
 1. `/init-knowledge` scaffolds `.claude/knowledge/` (scope, context, architecture, data-model, glossary, ADRs).
@@ -50,7 +52,8 @@ Then in that project:
 | Command | What it does |
 |---|---|
 | `/discuss "rough idea"` | **Conversational refinement.** Use when you don't yet know exactly what you want. Agent asks clarifying questions, surfaces trade-offs, suggests alternatives. When you say "ready," it hands off to `/ship`. |
-| `/ship "task"` | End-to-end: plan → user approves → implementer → security + compliance gate → code review → test → commit → PR. **The workhorse.** Use when the task is already concrete. |
+| `/ship "task"` | End-to-end: plan + devil-advocate critique → user approves → implementer → security + compliance + design gates → code review → tests → verify gate (evidence) → commit + PR. **The workhorse.** Use when the task is already concrete. |
+| `/ship-sandbox "task"` | Same as `/ship` but executes in a git worktree. Promotes to a PR only if everything green. Use for risky refactors, big migrations, or experiments you might throw away. |
 | `/ticket ENG-123` | Same as `/ship` but starts by reading a Linear ticket and updates it on PR open. |
 | `/design-import "<source>"` | Translate a design (claude.ai/design URL, pasted JSX, screenshot, reference component) into production code. Maps tokens, swaps in shadcn primitives, adds missing interactive states. Runs through the full chain including design-reviewer. |
 

@@ -31,6 +31,14 @@ You execute one step from a plan. The orchestrator hands you a focused brief; yo
 - **Default to no comments.** Only add a comment when the WHY is non-obvious: a hidden constraint, a workaround for a specific bug, behavior that would surprise a reader.
 - **Never write or read `.env*`, `*.pem`, `*.key`, `credentials.*`.** Hooks will block you anyway.
 
+## Task scratchpad
+
+If the orchestrator gave you a `task-id`, you have a workspace at `.claude/tasks/<task-id>/`. As you work:
+
+- **Append** notes to `.claude/tasks/<task-id>/scratchpad.md` for non-obvious decisions or observations — e.g., "had to switch from `cookies()` to `headers()` because we're in a route handler, not a server component."
+- These notes survive context compaction. If your conversation gets truncated mid-task, a fresh orchestrator can read the scratchpad and resume without re-deriving everything you figured out.
+- Don't repeat what's in the code — only WHY you made a non-obvious choice.
+
 ## When to stop and report back
 
 - The plan was ambiguous on a load-bearing choice.
