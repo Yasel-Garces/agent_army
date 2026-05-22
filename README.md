@@ -51,7 +51,8 @@ Then in that project:
 
 | Command | What it does |
 |---|---|
-| `/discuss "rough idea"` | **Conversational refinement.** Use when you don't yet know exactly what you want. Agent asks clarifying questions, surfaces trade-offs, suggests alternatives. When you say "ready," it hands off to `/ship`. |
+| `/brainstorm "topic"` | **Divergent ideation.** Use when you don't even know what to build yet. Agent maps the option space (5-8 lanes), compares on multiple axes, surfaces lanes you didn't name. Transitions to `/discuss` when you pick a direction. |
+| `/discuss "rough idea"` | **Conversational refinement.** Use when you have a direction but not a concrete task. Agent asks clarifying questions, surfaces trade-offs. When you say "ready," it hands off to `/ship`. |
 | `/ship "task"` | End-to-end: plan + devil-advocate critique → user approves → implementer → security + compliance + design gates → code review → tests → verify gate (evidence) → commit + PR. **The workhorse.** Use when the task is already concrete. |
 | `/ship-sandbox "task"` | Same as `/ship` but executes in a git worktree. Promotes to a PR only if everything green. Use for risky refactors, big migrations, or experiments you might throw away. |
 | `/ticket ENG-123` | Same as `/ship` but starts by reading a Linear ticket and updates it on PR open. |

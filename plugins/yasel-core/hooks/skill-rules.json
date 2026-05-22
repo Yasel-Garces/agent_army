@@ -199,6 +199,20 @@
         "contentPatterns": ["runs-on:", "uses:", "steps:"]
       }
     },
+    "brainstorming": {
+      "description": "Generative ideation — generate options before evaluating, compare on multiple axes, surface lanes the user hasn't named",
+      "priority": 7,
+      "triggers": {
+        "keywords": ["brainstorm", "ideas", "options", "approaches", "lanes", "directions", "trade-offs", "tradeoffs", "what if", "could we", "should we"],
+        "keywordPatterns": ["what\\s+(?:are|if|could|should)", "how\\s+(?:would|could|should)", "(?:i'm|im)\\s+thinking\\s+about", "trade.?offs?", "\\bideas?\\b"],
+        "intentPatterns": [
+          "(?:brainstorm|explore|think|consider).*(?:options|ideas|approaches|directions|alternatives)",
+          "(?:what|how)\\s+(?:should|could|would)\\s+(?:i|we|you).*(?:do|build|approach)",
+          "(?:options|alternatives|ways)\\s+(?:to|for)"
+        ]
+      },
+      "excludePatterns": ["fix bug", "implement", "ship it", "build the"]
+    },
     "design-fidelity": {
       "description": "Faithful translation of claude.ai/design / Figma / screenshots into production code — Tailwind tokens, shadcn primitives, responsive, interactive states, a11y",
       "priority": 8,
