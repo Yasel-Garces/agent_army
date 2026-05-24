@@ -79,15 +79,27 @@ Then in that project:
 | Command | What it does |
 |---|---|
 | `/status` | Human-readable snapshot: active session activity, last session summary, uncommitted changes, recent commits, open PRs, recent MCP calls. Read-only — safe to run in a second terminal while a long task is in progress. |
+| `/tokens [all]` | Token-usage report: session totals, top 5 expensive calls, breakdown by tool. `all` for full history. Best-effort estimates from input/output byte length. |
 
 Plus, in any shell:
 
 ```bash
 tail -f .claude/logs/activity.log    # real-time tool-by-tool progress
 cat .claude/logs/sessions.log        # session history
+jq -s 'map(.tokens_in + .tokens_out) | add' .claude/logs/tokens.jsonl   # total estimated tokens
 ```
 
-The plugin now also includes a **runtime watchdog** that warns at 30 min (soft) and 60 min (hard) of session time, and detects stuck-loop patterns (5 identical tool calls in a row). Override with `CLAUDE_SESSION_SOFT_LIMIT` / `CLAUDE_SESSION_HARD_LIMIT` env vars (seconds).
+The plugin includes a **runtime watchdog** that warns at 30 min (soft) / 60 min (hard) of session time, detects stuck-loop patterns (5 identical tool calls in a row), and optionally warns on **token budgets** when `CLAUDE_TOKEN_SOFT_LIMIT` / `CLAUDE_TOKEN_HARD_LIMIT` are set. All time-based overrides via `CLAUDE_SESSION_SOFT_LIMIT` / `CLAUDE_SESSION_HARD_LIMIT` (seconds).
+
+### Parallel worktrees
+
+| Command | What it does |
+|---|---|
+| `/worktree-new "feature description"` | Create a new git worktree + branch for parallel feature work. Open Claude Code in the new path to run `/ship` there without touching your main worktree. |
+| `/worktrees` | List all active worktrees with status (branch, uncommitted, last commit, session activity, PR). Surfaces cleanup candidates. |
+| `/worktree-remove <slug>` | Garbage-collect a finished worktree with safety checks (refuses on uncommitted changes / unpushed commits without `--force`). |
+
+Distinct from `/ship-sandbox` which runs a *single* task end-to-end in a worktree. These commands let you maintain *multiple parallel work sessions* across worktrees.
 
 ### Generating
 

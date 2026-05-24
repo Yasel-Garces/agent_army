@@ -17,6 +17,11 @@ state_file="${project_dir}/.claude/logs/session-state.json"
 SOFT="${CLAUDE_SESSION_SOFT_LIMIT:-1800}"   # 30 min
 HARD="${CLAUDE_SESSION_HARD_LIMIT:-3600}"   # 60 min
 
+# Optional token budget (in tokens). When set, warn at soft/hard thresholds.
+# Default unset → no token warnings.
+TOKEN_SOFT="${CLAUDE_TOKEN_SOFT_LIMIT:-0}"
+TOKEN_HARD="${CLAUDE_TOKEN_HARD_LIMIT:-0}"
+
 now="$(date +%s)"
 
 if command -v jq >/dev/null 2>&1; then
@@ -24,11 +29,17 @@ if command -v jq >/dev/null 2>&1; then
   tool_count="$(jq -r '.tool_count' "$state_file" 2>/dev/null || echo 0)"
   warned_soft="$(jq -r '.warned_soft // false' "$state_file" 2>/dev/null || echo false)"
   warned_hard="$(jq -r '.warned_hard // false' "$state_file" 2>/dev/null || echo false)"
+  tokens_total="$(jq -r '(.tokens_in_total // 0) + (.tokens_out_total // 0)' "$state_file" 2>/dev/null || echo 0)"
+  warned_tokens_soft="$(jq -r '.warned_tokens_soft // false' "$state_file" 2>/dev/null || echo false)"
+  warned_tokens_hard="$(jq -r '.warned_tokens_hard // false' "$state_file" 2>/dev/null || echo false)"
 else
   start="$(grep -oE '"start_epoch":[0-9]+' "$state_file" | head -1 | grep -oE '[0-9]+' || echo "$now")"
   tool_count="$(grep -oE '"tool_count":[0-9]+' "$state_file" | head -1 | grep -oE '[0-9]+' || echo 0)"
   warned_soft="false"
   warned_hard="false"
+  tokens_total=0
+  warned_tokens_soft="false"
+  warned_tokens_hard="false"
 fi
 
 elapsed=$(( now - start ))
@@ -51,6 +62,19 @@ elif (( elapsed >= SOFT )) && [[ "$warned_soft" != "true" ]]; then
 {"feedback": "RUNTIME WATCHDOG (soft limit hit): this session has been running for ${elapsed}s across ${tool_count} tool calls. Heads up — if you don't expect a long-running task, check progress (/status or tail -f .claude/logs/activity.log)."}
 EOF
   mark_warned "warned_soft"
+fi
+
+# Token-based warnings (only when a budget is set).
+if (( TOKEN_HARD > 0 )) && (( tokens_total >= TOKEN_HARD )) && [[ "$warned_tokens_hard" != "true" ]]; then
+  cat >&2 <<EOF
+{"feedback": "TOKEN WATCHDOG (hard limit hit): this session has used ~${tokens_total} tokens (limit ${TOKEN_HARD}). Run /tokens for the breakdown. Consider compacting, splitting the task, or raising CLAUDE_TOKEN_HARD_LIMIT."}
+EOF
+  mark_warned "warned_tokens_hard"
+elif (( TOKEN_SOFT > 0 )) && (( tokens_total >= TOKEN_SOFT )) && [[ "$warned_tokens_soft" != "true" ]]; then
+  cat >&2 <<EOF
+{"feedback": "TOKEN WATCHDOG (soft limit hit): this session has used ~${tokens_total} tokens (soft limit ${TOKEN_SOFT}). Run /tokens for the breakdown."}
+EOF
+  mark_warned "warned_tokens_soft"
 fi
 
 # Stuck detection: same exact tool + same args called many times in a row is a smell.
