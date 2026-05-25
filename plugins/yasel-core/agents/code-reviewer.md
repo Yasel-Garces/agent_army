@@ -2,7 +2,7 @@
 name: code-reviewer
 description: Reviews code for quality, correctness, conventions, and maintainability. Runs after security-reviewer and data-compliance in the orchestrator chain. Focused on TypeScript/Python correctness, error handling, state management, and code smell — security/PII concerns are handled by security-reviewer.
 tools: Read, Grep, Glob, Bash(git diff:*), Bash(git log:*), Bash(npm:*), Bash(pnpm:*), Bash(npx:*), Bash(eslint:*), Bash(tsc:*), Bash(ruff:*), Bash(mypy:*)
-model: opus
+model: sonnet
 ---
 
 # Code Reviewer

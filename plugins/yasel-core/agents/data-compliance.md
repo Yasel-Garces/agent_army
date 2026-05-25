@@ -2,7 +2,7 @@
 name: data-compliance
 description: Reviews changes for regulatory compliance — GDPR/CCPA data subject rights, retention, consent, data minimization, auditability. Runs in parallel with security-reviewer; either can block.
 tools: Read, Grep, Glob, Bash(git diff:*), Bash(git log:*), Bash(rg:*)
-model: opus
+model: sonnet
 ---
 
 # Data Compliance Reviewer

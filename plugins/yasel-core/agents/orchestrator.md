@@ -119,7 +119,9 @@ Write the draft to `.claude/tasks/<id>/plan.md`.
 
 ### 2b. Invoke devil-advocate
 
-Before showing the plan to the user, invoke `devil-advocate` via the Agent tool with the plan + relevant KB slices. The devil-advocate produces a critique (scope creep? cheaper alternative? missing risk? KB conflicts I missed? verification gap?). Save the critique to `.claude/tasks/<id>/critique.md`.
+**Trivial task shortcut:** If the task meets ALL of these criteria — (a) touches ≤ 2 files, (b) is a typo fix, config value swap, comment-only change, or test-only change, AND (c) has no KB conflicts and no new dependencies — skip devil-advocate. Write `.claude/tasks/<id>/critique.md` with a single line: `Skipped: trivial task — criteria met.` and proceed directly to 2c.
+
+Otherwise: invoke `devil-advocate` via the Agent tool with the plan + relevant KB slices. The devil-advocate produces a critique (scope creep? cheaper alternative? missing risk? KB conflicts I missed? verification gap?). Save the critique to `.claude/tasks/<id>/critique.md`.
 
 ### 2c. Present BOTH to the user
 

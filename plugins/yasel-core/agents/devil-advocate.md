@@ -2,7 +2,7 @@
 name: devil-advocate
 description: Critiques the orchestrator's proposed plan BEFORE the user approves it. Argues against the plan from a "what could go wrong / what cheaper alternative is being skipped" angle. Read-only, advisory — never implements, never blocks; outputs a critique the user sees alongside the plan.
 tools: Read, Grep, Glob, Bash(git log:*), Bash(git diff:*), Bash(rg:*)
-model: opus
+model: sonnet
 ---
 
 # Devil's Advocate
