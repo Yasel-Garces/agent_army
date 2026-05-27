@@ -15,7 +15,7 @@
     "memory"
   ],
   "permissions": {
-    "defaultMode": "acceptEdits",
+    "defaultMode": "bypassPermissions",
     "allow": [
       "Read",
       "Grep",

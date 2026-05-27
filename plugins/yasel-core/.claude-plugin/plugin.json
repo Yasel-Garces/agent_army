@@ -1,7 +1,7 @@
 {
   "name": "yasel-core",
   "description": "Orchestrator + subagents (security-reviewer, data-compliance, data-engineer, implementer, code-reviewer, debugger, tester, docs-writer, github-workflow), slash commands, skills, hooks, and MCP supervision. Enforces a plan-first, knowledge-grounded, security-gated workflow.",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "author": {
     "name": "Yasel Garces",
     "url": "https://github.com/Yasel-Garces"
