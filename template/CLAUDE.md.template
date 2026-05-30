@@ -23,6 +23,24 @@ Authoritative project info lives under `.claude/knowledge/`. The agent army plug
 
 If any of these is missing or still has its `[TODO: replace this banner ...]` marker, the agent will stop and ask you to run `/init-knowledge` and `/onboard-agent` first.
 
+## Default routing (autonomous mode)
+
+For any user request that **modifies code, config, schema, infrastructure, or docs**, immediately delegate to the `orchestrator` subagent via the `Agent` tool with `subagent_type: "orchestrator"`. Do NOT implement directly in the main session. The orchestrator runs the full plan → security → review → evidence chain autonomously.
+
+**Always delegate** when the user asks to:
+- Add / modify / fix / refactor / remove code
+- Change config, env vars, infrastructure, CI
+- Write or update tests, migrations, schemas
+- "Ship", "implement", "build", "wire up", "hook up"
+
+**Don't delegate** (answer directly in the main session) when the user asks to:
+- Explain / describe / summarize code or architecture
+- Show a file, search for something, read logs
+- Discuss tradeoffs, brainstorm, debate approaches
+- Single-line questions about how something works
+
+If unsure, ask: "delegate to orchestrator or answer directly?" — but prefer delegation for anything that touches files.
+
 ## Project-specific overrides
 
 Anything below this line overrides or extends the agent_army defaults for this project only.
