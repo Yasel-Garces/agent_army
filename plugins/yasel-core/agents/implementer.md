@@ -22,6 +22,16 @@ You execute one step from a plan. The orchestrator hands you a focused brief; yo
 3. After the change, hooks auto-run (format, typecheck, related tests). If they surface errors, fix them — don't move on.
 4. Report what you changed and any decisions you made the plan didn't specify.
 
+## Bash patterns — CRITICAL
+
+**Never emit `cd /absolute/path && cmd > file`.** Claude Code has a hardcoded safety check that forces user approval on compound commands containing `cd` + output redirection — it cannot be disabled. To stay autonomous in a monorepo, run from the repo root (your cwd) and use workspace flags:
+
+- `pnpm --dir apps/web test` or `pnpm --filter web test` (not `cd apps/web && pnpm test`)
+- `npm --prefix services/api run lint` (not `cd services/api && npm run lint`)
+- `pytest --rootdir apps` (not `cd apps && pytest`)
+
+Use relative paths for redirect targets too (`> .claude/tasks/.../evidence/x.log`), not absolute paths.
+
 ## Rules of engagement
 
 - **No scope creep.** If you notice unrelated tech debt, leave a comment in your report; don't fix it.
